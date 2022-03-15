@@ -1,12 +1,14 @@
 <?php
 namespace App\Entity;
 
-use App\Repository\IngredientsRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\IngredientsRepository;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: IngredientsRepository::class)]
+#[UniqueEntity('name')]
 class Ingredients
 {
     #[ORM\Id]

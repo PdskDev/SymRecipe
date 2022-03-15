@@ -32,7 +32,6 @@ class IngredientsRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
-
     /**
      * @throws ORMException
      * @throws OptimisticLockException

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymRecipe - Mes recettes!{% endblock %}
+
+{% block body %}
+<div class="container m-6">
+{% if not recettes.items is same as ([]) %}
+<h5>Mes recettes:</h5>
+{% for message in app.flashes('success') %}
+  <div class="alert alert-dismissible alert-success mt-4">
+  {{ message }}
+  </div>
+  {% endfor %}
+<h6>Il y'a {{ recettes.getTotalItemCount }} recette(s) au total.</h6>
+<a href="{{ path('recette.new')}}" class="btn btn-primary">Ajouter une nouvelle recette</a>
+<div class="count mt-3">
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+     <th scope="col">Date</th>
+      <th scope="col">ID</th> 
+      <th scope="col">Nom</th>
+      <th scope="col">Temps</th>
+      <th scope="col">Nb personnes</th>
+      <th scope="col">Difficulté</th>
+      <th scope="col">Description</th>
+      {#<th scope="col">Ingrédients</th>#}
+      <th scope="col">Prix</th>
+      <th scope="col">Favoris</th>
+      <th scope="col">MAJ</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for recette in recettes %}
+    <tr class="table-primary">
+      <td>{{recette.createdAt|date("d/m/Y") }}</td>
+      <td scope="row"><a href="{{ path('recette.edit', {'id': recette.id}) }}">{{ recette.id }}</a></td>
+      <td>{{recette.name }}</td>
+      <td>{{recette.time}}</td>
+      <td>{{recette.nbPeople}}</td>
+      <td>{{ (recette.difficulty is same as(null)) ? '--' : recette.difficulty|number_format(2, ',') }}</td>
+      <td>{{recette.description}}</td>
+      {#<td>{{recette.ingredients}}</td>#}
+      <td>{{ (recette.price is same as(null)) ? '--' : recette.price|number_format(2, ',') }}</td>
+      <td>{# {{recette.isFavorite }} #}
+      {% if recette.isFavorite == 0 %} Non {% else %} Oui {% endif %}
+      </td>
+      <td>{{recette.updatedAt|date("d/m/Y") }}</td>
+      <td scope="row"><a href="{{ path('recette.edit', {'id': recette.id}) }}" class="btn btn-info">Modifier</a></td>
+      <td scope="row"><a href="{{ path('recette.delete', {'id': recette.id}) }}" onclick="return confirm('Voulez-vous vraiment supprimer cette recette ?', 'Supprimer')" class="btn btn-danger">Suprimer</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="navigation d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(recettes) }}
+</div>
+
+{% else %}
+<div class="alert alert-dismissible alert-info mt-4">
+  Oops! Il n'y'a pas de recette.
+</div>
+{% endif %}
+{% endblock %}

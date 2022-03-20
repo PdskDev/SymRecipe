@@ -27,7 +27,13 @@ class RecipeController extends AbstractController
             'recettes' => $recettes,
         ]);
     }
-
+    /**
+     * Ajout d'une recette
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/recette/nouvelle/', name: 'recette.new', methods:['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $manager): Response {
 
@@ -53,9 +59,15 @@ class RecipeController extends AbstractController
         ]);
     }
 
-
-    #[Route('/recette/edition/{id}', name:'recette.edit', methods:['GET', 'POST'])]
-   //public function edit(IngredientsRepository $repository, int $id): Response
+    /**
+    * Edition d'une recette
+    *
+    * @param Recipe $recettes
+    * @param Request $request
+    * @param EntityManagerInterface $manager
+    * @return Response
+    */
+   #[Route('/recette/edition/{id}', name:'recette.edit', methods:['GET', 'POST'])]
    public function edit(Recipe $recettes, Request $request, EntityManagerInterface $manager): Response
    {
       //$ingredient = $repository->findOneBy(['id' => $id]);
@@ -80,8 +92,15 @@ class RecipeController extends AbstractController
       ]);
    }
 
-
-   #[Route('/recette/suppression/{id}', name:'recette.delete', methods:['GET'])]
+   
+   /**
+    * Suppression d'une recette
+    *
+    * @param EntityManagerInterface $manager
+    * @param Recipe $recettes
+    * @return Response
+    */
+    #[Route('/recette/suppression/{id}', name:'recette.delete', methods:['GET'])]
    public function delete(EntityManagerInterface $manager, Recipe $recettes): Response
    {
        if(!$recettes){

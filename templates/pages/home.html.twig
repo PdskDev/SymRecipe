@@ -1,13 +1,15 @@
 {% extends "./base.html.twig" %}
 {% block title%}SymRecipe Accueil{% endblock%}
 {% block body %}
-<div class="container mt-4">
+<div class="container mt-3">
 <div class="jumbotron">
-  <h1 class="display-4">Bienvenue sur SymRecipe</h1>
+  <h5 class="display-6">{% if app.user %}Cher(e) {{ app.user.fullname }}, bienvenue sur SymRecipe!{% else %}Vous êtes à l'accueil de SymRecipe.{% endif %}</h5>
   <p class="lead">SymRecipe est une application de partage de recettes de cuisine.</p>
-  <hr class="my-4">
+  <hr class="my-3">
+  {% if not app.user %}
   <p>Pour commencer, rendez-vous à la page d'inscription.</p>
-  <a class="btn btn-primary btn-lg" href="#" role="button">Inscription</a>
+  <a class="btn btn-primary btn-lg" href="{{ path('security.registration') }}" role="button">Inscription</a>&nbsp;<a class="btn btn-primary btn-lg" href="{{ path('security.login') }}" role="button">Connexion</a>
+{% endif %}
 </div>
 </div>
 {% endblock %}

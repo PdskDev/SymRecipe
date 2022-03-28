@@ -60,8 +60,11 @@
 </div>
 
 {% else %}
+<div class="container m-6">
 <div class="alert alert-dismissible alert-info mt-4">
   Oops! Il n'y'a pas de recette.
+</div>
+<a href="{{ path('recette.new')}}" class="btn btn-primary">Ajouter une nouvelle recette</a>
 </div>
 {% endif %}
 {% endblock %}

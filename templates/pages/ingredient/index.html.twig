@@ -30,7 +30,7 @@
   {% for ingredient in ingredients %}
     <tr class="table-primary">
       <td>{{ingredient.createdAt|date("d/m/Y") }}</td>
-      <th scope="row"><a href="path('ingredient.edit', {'id': ingredient.id})">{{ ingredient.id }}</a></th>
+      <th scope="row"><a href="{{ path('ingredient.edit', {'id': ingredient.id}) }}">{{ ingredient.id }}</a></th>
       <td>{{ingredient.name }}</td>
       <td>{{ingredient.price|number_format(2, ',') }}</td>
       {#<td scope="row"><a href="/ingredients/edition/{{ingredient.id }}" class="btn btn-primary">Modifier</a></td>

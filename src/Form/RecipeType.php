@@ -20,9 +20,24 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
+
 
 class RecipeType extends AbstractType
 {
+    //public function __construct(Security $security)
+    //{
+    //   $this->security = $security;
+    //}
+
+    private $token;
+
+    public function __construct(TokenStorageInterface $token)
+    {
+       $this->token = $token;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -118,7 +133,10 @@ class RecipeType extends AbstractType
                 'class' => Ingredients::class,
                 'query_builder' => function (IngredientsRepository $repo) {
                     return $repo->createQueryBuilder('i')
-                        ->orderBy('i.name', 'ASC');
+                    ->where('i.user = :user')
+                    ->orderBy('i.name', 'ASC')
+                    //->setParameter('user', $this->security->getUser()->getId());
+                    ->setParameter('user', $this->token->getToken()->getUser());
                 },
                 'choice_label' => 'name',
                 'multiple' => true,

@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Mark;
 use App\Entity\Recipe;
+use App\Form\MarkType;
 use App\Form\RecipeType;
+use App\Repository\MarkRepository;
 use App\Repository\RecipeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -13,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 class RecipeController extends AbstractController
 {
@@ -31,6 +35,88 @@ class RecipeController extends AbstractController
             'recettes' => $recettes,
         ]);
     }
+
+
+     /**
+     * This controller allow us to display all public recipe
+     *
+     * @param Recipe $recette
+     * @return Response
+     */
+
+     
+    #[Route("/recette/publique", "recipe.index.public", methods: ['GET'])]
+    public function indexPublic( 
+    RecipeRepository $recipe_repo, 
+    PaginatorInterface $paginator, 
+    Request $request): Response {
+
+        $recettes = $paginator->paginate(
+            $recipe_repo->findPublicRecipe(null),
+            $request->query->getInt('page', 1),
+            4
+        );
+
+        return $this->render('pages/recipe/index_public.html.twig', [
+            'recettes' => $recettes
+        ]);
+
+    }
+
+
+    #[Security("is_granted('ROLE_USER') and recette.getIsPublic() === true")]
+    #[Route("/recette/{id}", "recipe.show", methods: ['GET', 'POST'])]
+    public function publicShow(
+        Recipe $recette, 
+        Request $request, 
+        MarkRepository $mark_repo,
+        EntityManagerInterface $manager): Response
+    {
+        $mark = new Mark();
+
+        $form = $this->createForm(MarkType::class, $mark);
+
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) { 
+            $form->getData();
+            $mark->setUser($this->getUser())
+            ->setRecipe($recette);
+
+            $existedMark = $mark_repo->findOneBy([
+                'user' => $this->getUser(),
+                'recipe' => $recette
+            ]);
+
+            if(!$existedMark){
+
+                $manager->persist($mark);
+            } else {
+                $this->addFlash(
+                    'warning',
+                    'Vous avez déjà noté cette recette.'
+                 );
+
+                return $this->redirectToRoute('recipe.show', ['id' => $recette->getId()]);
+            }
+
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre note a bien été prise en compte pour cette recette.'
+             );
+
+            return $this->redirectToRoute('recipe.show', ['id' => $recette->getId()]);
+        }
+
+        return $this->render('pages/recipe/show.html.twig', [
+            'recette' => $recette,
+            'form' => $form->createView()
+        ]);
+    }
+
+
     /**
      * Ajout d'une recette
      *

@@ -1,5 +1,5 @@
 {% extends "./base.html.twig" %}
-{% block title%}SymRecipe Accueil{% endblock%}
+{% block title %}SymRecipe Accueil{% endblock %}
 {% block body %}
 <div class="container mt-3">
 <div class="jumbotron">
@@ -11,5 +11,23 @@
   <a class="btn btn-primary btn-lg" href="{{ path('security.registration') }}" role="button">Inscription</a>&nbsp;<a class="btn btn-primary btn-lg" href="{{ path('security.login') }}" role="button">Connexion</a>
 {% endif %}
 </div>
+
+<div class="recette">
+<h2 class="mt-3">Recettes de la communauté</h2>
+
+<div class= "d-flex justify-content-between">
+{% for recette in recettes %}
+<div class="card border-secondary mb-3" style="max-width: 20rem;">
+  <div class="card-header">Recette n° {{recette.id }}</div>
+  <div class="card-body">
+    <h6 class="card-title">{{recette.name }}</h6>
+    <p class="card-text">{{recette.description|slice(0, 100 ) ~ '...'}}</p>
+    <p class="card-text">Difficulté: {{ (recette.difficulty is same as(null)) ? '--' : recette.difficulty|number_format(2, ',') }}, Nb de personnes: {{recette.nbPeople}}, Temps: {{recette.time}}</p>
+    <p class="card-text">Favoris:  {% if recette.isFavorite == 0 %} Non {% else %} Oui {% endif %}, Prix: {{ (recette.price is same as(null)) ? '--' : recette.price|number_format(2, ',') }}</p>
+    <p class="card-text"><a href="{{ path('recipe.index.public') }}" class="btn btn-primary">Voir</a></p>
+  </div>
+</div>
+
+{% endfor %}
 </div>
 {% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymRecipe - Les recettes publiques!{% endblock %}
+
+{% block body %}
+<div class="container m-4">
+{% if not recettes.items is same as ([]) %}
+
+<h5>Les recettes marquées "publiques":</h5>
+
+{% for message in app.flashes('success') %}
+  <div class="alert alert-dismissible alert-success mt-4">
+  {{ message }}
+  </div>
+{% endfor %}
+
+<h6>Il y'a {{ recettes.getTotalItemCount }} recette(s) au total.</h6>
+
+<div class= "d-flex justify-content-center flex-wrap mt-3">
+{% for recette in recettes %}
+<div class="card border-secondary mb-3" style="max-width: 20rem;">
+  <div class="card-header">Recette n° {{recette.id }}</div>
+  <div class="card-body">
+    <h6 class="card-title">{{recette.name }}</h6>
+    <p class="card-text">{{recette.description|slice(0, 100 ) ~ '...'}}</p>
+    <p class="card-text">Difficulté: {{ (recette.difficulty is same as(null)) ? '--' : recette.difficulty|number_format(2, ',') }}, Nb de personnes: {{recette.nbPeople}}, Temps: {{recette.time}}</p>
+    <p class="card-text">Favoris:  {% if recette.isFavorite == 0 %} Non {% else %} Oui {% endif %}, Prix: {{ (recette.price is same as(null)) ? '--' : recette.price|number_format(2, ',') }}</p>
+    <p class="card-text"><a href="{{ path('recipe.index.public') }}" class="btn btn-primary">Voir</a></p> 
+  </div>
+</div>
+
+{% endfor %}
+</div>
+ 
+<div class="navigation d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(recettes) }}
+</div>
+
+{% else %}
+
+<div class="container m-6">
+<div class="alert alert-dismissible alert-info mt-4">
+  Oops! Il n'y'a pas de recette.
+</div>
+
+</div>
+{% endif %}
+{% endblock %}
